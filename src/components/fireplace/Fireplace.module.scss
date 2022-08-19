@@ -1,0 +1,17 @@
+.fireImages {
+    width: 223px;
+}
+
+.fireImages>* {
+    position: absolute;
+}
+
+.svg>svg {
+    transform: scale(2) translatey(20px);
+}
+
+@media (max-width: 540px) {
+    .svg>svg {
+        transform: scale(1) translatey(10px);
+    }
+}

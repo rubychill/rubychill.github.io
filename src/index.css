@@ -1,10 +1,29 @@
+@font-face {
+  font-family: FiraCode;
+  src: url("assets/font/FiraCode-VariableFont_wght.ttf");
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: -apple-system, FiraCode, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: #ecd0a7;
+}
+
+a {
+  color: #ecd0a7;
+  transition: 0.5s all;
+}
+
+a:hover {
+  color: #e7a33d;
+}
+
+a:active {
+  color: #e7a33d;
 }
 
 #root,

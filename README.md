@@ -1,34 +1,25 @@
 ## Usage
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+Standard npm-y things: `npm start`, `npm run build`, etc
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+## Ideas
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+The overall point of thatchill.com is to experiment with hand crafted web technologies and present them in a way that is explicitly mine. The site is obtuse and meandering while still being accessible and understandable.
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+### Landing
 
-## Available Scripts
+Landing page is chill and vibey, with a link to the homepage. 404 pages are similar to the landing page, with a link to return to the home page.
 
-In the project directory, you can run:
+### Home
 
-### `npm dev` or `npm start`
+A retro futuristic style interface reminiscent of Nier Automata and Aliens technological design. Has links to different parts of the site.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Maze
 
-The page will reload if you make edits.<br>
+A maze that can be explored. The maze is rendered from a first person perspective as a series of vertical lines that grow and shrink as the user gets closer to and further away from walls.
 
-### `npm run build`
+Uses SVGs as the vertical lines for speed.
 
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
+Ambient music is played that corresponds to the EQ represented by the height of the vertical lines (ie closer walls on the left of the screen correlate to a louder bass tone)
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+The maze contains hidden easter eggs of some sort, idk

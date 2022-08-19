@@ -10,9 +10,7 @@ export interface CornerMenuProps {
 export const CornerMenu = (props: CornerMenuProps) => {
 
 
-    return <div class={classnames(props.class)}>
-        <div class={styles.icon}>
-            <CornerIcon />
-        </div>
+    return <div class={classnames(props.class, styles.icon)}>
+        <CornerIcon />
     </div>
 }
