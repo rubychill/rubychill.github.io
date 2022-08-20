@@ -1,8 +1,8 @@
-import { Link } from '@solidjs/router';
+import { Link, useNavigate } from '@solidjs/router';
 import classnames from 'classnames';
+import { createSignal } from 'solid-js';
+import { Transition } from 'solid-transition-group';
 import { Fireplace } from '../../components/fireplace/Fireplace';
-import { TransitionLink } from '../../components/transitionLink/TransitionLink';
-import { TransitionNavigation, useTransitionNavigation } from '../../components/transitionLink/TransitionNavigation';
 import styles from './Landing.module.scss';
 
 export interface LandingProps {
@@ -11,18 +11,38 @@ export interface LandingProps {
 }
 
 export const Landing = (props: LandingProps) => {
+    const navigate = useNavigate();
+    const [show, setShow] = createSignal(true);
 
-
-    return <TransitionNavigation animationDuration={500} from={{ opacity: 1 }} to={{ opacity: 0 }}>
-        <LandingInner {...props} />
-    </TransitionNavigation>
-}
-
-const LandingInner = (props: LandingProps) => {
-    const transition = useTransitionNavigation();
-
-    return <div class={classnames(props.class, styles.center, transition?.transitionClass)}>
-        <p class={styles.blurb}>stay a while and <TransitionLink href="/home">rest</TransitionLink></p>
-        <Fireplace />
-    </div>
+    return <Transition
+        appear={true}
+        onEnter={(el, done) => {
+            const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 5000 });
+            a.finished.then(() => {
+                if (el instanceof HTMLElement) {
+                    el.style.opacity = "1";
+                }
+                done();
+            });
+        }}
+        onExit={(el, done) => {
+            let startingOpacity = "1";
+            if (el instanceof HTMLElement) {
+                startingOpacity = el.style.opacity;
+            }
+            const a = el.animate([{ opacity: startingOpacity }, { opacity: 0 }], { duration: 500 });
+            a.finished.then(() => {
+                navigate("/home");
+                done();
+            });
+        }}
+    >
+        {show() && <div class={classnames(props.class, styles.center)}>
+            <p class={styles.blurb}>stay a while and <a href="/home" onClick={(e) => {
+                e.preventDefault();
+                setShow(false);
+            }}>rest</a></p>
+            <Fireplace />
+        </div>}
+    </Transition>
 }
