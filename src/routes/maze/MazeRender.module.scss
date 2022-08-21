@@ -1,0 +1,25 @@
+.mazeRender {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.debug {
+    width: 100%;
+    overflow: scroll;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
+    &>div {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        align-items: center;
+    }
+}
+
+.debugMap {}
