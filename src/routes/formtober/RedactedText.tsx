@@ -1,22 +1,25 @@
 interface RedactedTextProps {
     knownText?: string;
     unknownText?: Array<number | string>;
+    class?: string;
 }
 
 export const RedactedText = (props: RedactedTextProps) => {
     if (props.knownText) {
         const knownTextRegex = /([a-z][A-Z][0-9])*/g
-        return <span>{props.knownText.replace(knownTextRegex, "&#x25AE;")}</span>;
+        return <div class={props.class}>{props.knownText.replace(knownTextRegex, '\u25AE')}</div>;
     } else if (props.unknownText) {
-        return <span>{props.unknownText.reduce((acc, char) => {
+        return <div class={props.class}>{props.unknownText.reduce((acc, char) => {
             if (typeof char === "number") {
-                acc += "&#x25AE;".repeat(char);
-                acc += " ";
+                if (acc.toString().charAt(acc.toString().length - 1) === '\u25AE') {
+                    acc += " ";
+                }
+                acc += '\u25AE'.repeat(char);
             } else {
                 acc += char;
             }
-            return char;
-        }, "")}</span>;
+            return acc;
+        }, "" as string)}</div>;
     } else {
         return null;
     }

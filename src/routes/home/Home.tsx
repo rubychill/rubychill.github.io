@@ -9,6 +9,7 @@ export interface HomeProps {
 export const Home = (props: HomeProps) => {
     return <div class={classnames(props.class, styles.home)}>
         <h1>Welcome</h1>
-        <a href={"/maze"}>Maze</a>
+        {/* <a href={"/maze"}>Maze</a> */}
+        <a href={"/formtober"}>Formtober</a>
     </div>
 }

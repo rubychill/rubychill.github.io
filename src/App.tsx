@@ -5,15 +5,17 @@ import { Route, Router, Routes } from '@solidjs/router';
 import { Landing } from './routes/landing/Landing';
 import { Home } from './routes/home/Home';
 import { Maze } from './routes/maze/Maze';
+import { Formtober } from './routes/formtober/Formtober';
 
 const App: Component = () => {
   return (
     <div class={styles.app}>
-      <CornerMenu />
+      {/* <CornerMenu /> */}
       <Routes>
         <Route path="/" component={Landing} />
         <Route path="/home" component={Home} />
         <Route path="/maze" component={Maze} />
+        <Route path="/formtober" component={Formtober} />
       </Routes>
     </div>
   );
