@@ -7,7 +7,8 @@ interface RedactedTextProps {
 export const RedactedText = (props: RedactedTextProps) => {
     if (props.knownText) {
         const knownTextRegex = /([a-z][A-Z][0-9])*/g
-        return <div class={props.class}>{props.knownText.replace(knownTextRegex, '\u25AE')}</div>;
+        props.knownText.replace(knownTextRegex, '\u25AE')
+        return <div class={props.class}>{props.knownText}</div>;
     } else if (props.unknownText) {
         return <div class={props.class}>{props.unknownText.reduce((acc, char) => {
             if (typeof char === "number") {

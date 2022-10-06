@@ -1,14 +1,15 @@
-import { Route, Routes } from '@solidjs/router';
+import { Route, Routes, useNavigate } from '@solidjs/router';
+import classNames from 'classnames';
 import { DateLabel } from './DateLabel';
 import styles from './Formtober.module.scss';
+import { Room } from './pieces/room/Room';
 import { RedactedText } from './RedactedText';
 
 export const Formtober = () => {
     return <div class={styles.formtober}>
         <Routes>
-            <Route path={"/"} component={Directory}>
-                {/* <Route path={"/1"} /> */}
-            </Route>
+            <Route path={"/"} component={Directory} />
+            <Route path={"/room"} component={Room} />
         </Routes>
     </div>;
 }
@@ -18,6 +19,7 @@ interface DirectoryItem {
     to: string;
     unknownText?: Array<number | string>
     knownText?: string;
+    path?: string;
 }
 
 const directory: DirectoryItem[] = [
@@ -25,11 +27,14 @@ const directory: DirectoryItem[] = [
         from: "1",
         to: "3",
         unknownText: [5, 6],
+        knownText: "THE ROOM OF SPIRIT AND TIME",
+        path: "room"
     },
     {
         from: "4",
         to: "6",
         unknownText: [4, 2, 2, 3, 3, ". ", 2, ", ", 3, 5, 3, ". ", 3, 4, 3, ", ", 3, 5, 3, ". ", 2, ", ", 2],
+        knownText: "LOOK ME IN THE EYE. NO, THE OTHER ONE. NOT THAT ONE, THE OTHER ONE. NO, TH"
     },
     {
         from: "7",
@@ -78,9 +83,10 @@ const directory: DirectoryItem[] = [
 ]
 
 const Directory = () => {
+    const navigate = useNavigate();
     return <div class={styles.directory}>
         {directory.map((dirItem) => <>
-            <div class={styles.dirItem}>
+            <div class={styles.dirItem} onClick={() => dirItem.path && navigate(dirItem.path)}>
                 <DateLabel
                     from={dirItem.from}
                     to={dirItem.to}
@@ -91,7 +97,7 @@ const Directory = () => {
                 <RedactedText
                     unknownText={dirItem.unknownText}
                     knownText={dirItem.knownText}
-                    class={styles.redactedText}
+                    class={classNames(styles.redactedText, dirItem.knownText && styles.underlined)}
                 />
             </div>
         </>)}
