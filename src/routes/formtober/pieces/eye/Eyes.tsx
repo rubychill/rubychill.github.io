@@ -22,8 +22,9 @@ export const Eyes = (props: EyesProps) => {
     ]);
 
     const getPupilPosition = (eyePosition: Vector2, mousePosition: Vector2): Vector2 => {
-        if (eyePosition.distanceTo(mousePosition) > 50) {
-            return eyePosition.sub(mousePosition).normalize();
+        const eyePositionCenter = eyePosition.clone().add(new Vector2(20, 20));
+        if (eyePositionCenter.distanceTo(mousePosition) > 50) {
+            return eyePositionCenter.sub(mousePosition).normalize();
         } else {
             return new Vector2(0, 0);
         }
@@ -38,10 +39,19 @@ export const Eyes = (props: EyesProps) => {
     window.addEventListener("mousemove", onMouseMove);
     onCleanup(() => window.removeEventListener("mousemove", onMouseMove));
 
-    return <div class={classNames(props.class)}>
-        <div>LOOK ME IN THE EYE</div>
+    const onEyeClick = () = > {
+
+    }
+
+    return <div class={classNames(props.class, styles.eyes)}>
         <For each={eyes()}>
-            {(eye) => <Eye pupilPosition={eye.pupilPosition} position={eye.position} />}
+            {(eye) => <Eye 
+                pupilPosition={eye.pupilPosition} 
+                position={eye.position} 
+                class={styles.eye} 
+                style={{transform: `transform(${eye.position.x}, ${eye.position.y})`}}
+                onClick={onEyeClick}
+            />}
         </For>
     </div>
 }
