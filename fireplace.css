@@ -1,0 +1,34 @@
+.fireImages {
+    width: 223px;
+}
+
+.fireImages>* {
+    position: absolute;
+}
+
+.fireImages>svg {
+    transform: scale(2) translatey(20px);
+}
+
+@media (max-width: 540px) {
+    .svg>svg {
+        transform: scale(1) translatey(10px);
+    }
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 10px;
+    height: 100%;
+    background-color: #24212c;
+    /* opacity: 0; */
+}
+
+.blurb {
+    font-size: 1.2em;
+    text-align: center;
+}
