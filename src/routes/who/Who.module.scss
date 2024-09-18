@@ -2,19 +2,19 @@
     padding-top: 20px;
 
     .gay {
-        :nth-child(1), :nth-child(5) {
+        :nth-child(4), :nth-child(8) {
             color: #5BCEFA;
         }
-        :nth-child(2), :nth-child(4) {
+        :nth-child(5), :nth-child(7) {
             color: #F5A9B8;
         }
-        :nth-child(3), :nth-child(7) {
+        :nth-child(2), :nth-child(6) {
             color: #FFFFFF;
         }
-        :nth-child(6) {
+        :nth-child(1) {
             color: #FF9A56;
         }
-        :nth-child(8) {
+        :nth-child(3) {
             color: #D162A4;
         }
     }
