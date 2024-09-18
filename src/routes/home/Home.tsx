@@ -1,15 +1,14 @@
 import classnames from 'classnames';
 import styles from './Home.module.scss';
 
-export interface HomeProps {
-    class?: string;
-
-}
-
-export const Home = (props: HomeProps) => {
-    return <div class={classnames(props.class, styles.home)}>
-        <h1>Welcome</h1>
-        {/* <a href={"/maze"}>Maze</a> */}
-        <a href={"/formtober"}>Formtober</a>
+export const Home = () => {
+    return <div class={classnames(styles.home)}>
+        <h1>welcome</h1>
+        <a href={"/who"}>who</a>
+        <div class={classnames(styles.experiments)}>
+            <p>experiments</p>
+            <a href={"/room"}>0</a>
+            <a href={"/maze"}>1[WIP]</a>
+        </div>
     </div>
 }

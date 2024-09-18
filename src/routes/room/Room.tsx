@@ -1,19 +1,16 @@
 import classnames from 'classnames';
 import styles from './Room.module.scss';
-import { PerspectiveCamera, Scene, WebGLRenderer, CubicBezierCurve3, Vector3, BufferGeometry, LineBasicMaterial, Line, Vector2, Plane, TextureLoader, NearestFilter, SpriteMaterial, Sprite } from 'three';
-import { onCleanup } from 'solid-js';
+import { PerspectiveCamera, Scene, WebGLRenderer, Vector3, BufferGeometry, LineBasicMaterial, Line, Vector2, TextureLoader, NearestFilter, SpriteMaterial, Sprite, Raycaster } from 'three';
+import { createSignal, onCleanup } from 'solid-js';
 import { range } from 'lodash';
 import boyPng from './boy.png';
-
-export interface RoomProps {
-    class?: string;
-}
 
 const gridResolution = 20;
 const lineResolution = 11;
 const rotateAmount = 0.2;
 
-export const Room = (props: RoomProps) => {
+export const Room = () => {
+    const [quote, setQuote] = createSignal("");
     const scene = new Scene();
 
     const camera = new PerspectiveCamera(75, 4 / 3, 0.1, 1000);
@@ -83,13 +80,36 @@ export const Room = (props: RoomProps) => {
     scene.add(...lineObjects);
 
     const loader = new TextureLoader();
-    var boyTexture = loader.load(boyPng);
+    const boyTexture = loader.load(boyPng);
     boyTexture.magFilter = NearestFilter;
-    var boyMaterial = new SpriteMaterial({ map: boyTexture });
-    var boySprite = new Sprite(boyMaterial);
+    const boyMaterial = new SpriteMaterial({ map: boyTexture });
+    const boySprite = new Sprite(boyMaterial);
     boySprite.scale.set(0.7, 0.7, 0.7);
     boySprite.position.set(0.02, 0, -0.05);
     scene.add(boySprite);
+
+    renderer.domElement.addEventListener("pointerdown", (event) => {
+        const pointer = new Vector2();
+        const raycaster = new Raycaster();
+
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+        console.log(pointer.x, pointer.y);
+
+        raycaster.setFromCamera(pointer, camera);
+
+        const intersects = raycaster.intersectObjects(scene.children, true);
+
+        if (intersects.length > 0) {
+            const firstIntersectedObject = intersects[0].object;
+            console.log("UUID of intersected object: ", firstIntersectedObject.uuid);
+
+            if (firstIntersectedObject instanceof Sprite) {
+            console.log('Sprite clicked:', firstIntersectedObject);
+            }
+        }
+    });
 
     let frameCount = 0;
     let frame = requestAnimationFrame(function loop() {
@@ -103,8 +123,7 @@ export const Room = (props: RoomProps) => {
         cancelAnimationFrame(frame);
     });
 
-    return <div class={classnames(props.class)}>
-        <div>SPIRIT-TIME</div>
+    return <div class={classnames()}>
         <div class={classnames(styles.threeContainer)}>{renderer.domElement}</div>
     </div>
 }

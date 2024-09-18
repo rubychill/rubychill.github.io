@@ -1,16 +1,12 @@
-import { Route, Routes, useNavigate } from '@solidjs/router';
+import { Route, useNavigate } from '@solidjs/router';
 import classNames from 'classnames';
 import { DateLabel } from './DateLabel';
 import styles from './Formtober.module.scss';
-import { Room } from './pieces/room/Room';
+import { Room } from '../room/Room';
 import { RedactedText } from './RedactedText';
 
 export const Formtober = () => {
     return <div class={styles.formtober}>
-        <Routes>
-            <Route path={"/"} component={Directory} />
-            <Route path={"/room"} component={Room} />
-        </Routes>
     </div>;
 }
 

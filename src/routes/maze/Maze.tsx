@@ -12,8 +12,8 @@ export interface MazeProps {
 
 }
 
-export const Maze = (props: MazeProps) => {
-    const [keys, { event }] = useKeyDownList();
+export const Maze = () => {
+    const keys = useKeyDownList();
     const [cameraPos, setCameraPos] = createSignal({ x: 4, y: 4 });
     const [cameraAngle, setCameraAngle] = createSignal(90);
     const [cameraFov, setCameraFov] = createSignal(60);
@@ -61,7 +61,7 @@ export const Maze = (props: MazeProps) => {
         });
     }, frameTime);
 
-    return <div class={classnames(props.class, styles.maze)}>
+    return <div class={classnames(styles.maze)}>
         <MazeRender
             mazeMap={mazeMap}
             horizontalResolution={cameraResolution()}

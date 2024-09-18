@@ -11,6 +11,6 @@ export const CornerMenu = (props: CornerMenuProps) => {
 
 
     return <div class={classnames(props.class, styles.icon)}>
-        <CornerIcon />
+        <a href={"/home"}><CornerIcon /></a>
     </div>
 }

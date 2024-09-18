@@ -1,4 +1,4 @@
-import { Link, useNavigate } from '@solidjs/router';
+import { useNavigate } from '@solidjs/router';
 import classnames from 'classnames';
 import { createSignal } from 'solid-js';
 import { Transition } from 'solid-transition-group';
@@ -10,7 +10,7 @@ export interface LandingProps {
 
 }
 
-export const Landing = (props: LandingProps) => {
+export const Landing = () => {
     const navigate = useNavigate();
     const [show, setShow] = createSignal(true);
 
@@ -37,7 +37,7 @@ export const Landing = (props: LandingProps) => {
             });
         }}
     >
-        {show() && <div class={classnames(props.class, styles.center)}>
+        {show() && <div class={classnames(styles.center)}>
             <p class={styles.blurb}>stay a while and <a href="/home" onClick={(e) => {
                 e.preventDefault();
                 setShow(false);

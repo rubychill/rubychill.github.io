@@ -1,6 +1,10 @@
 .threeContainer {
-    min-width: 400px;
-    min-height: 300px;
+    width: 400px;
+    height: 300px;
+    margin: auto;
+
+    top: calc(50vh - 150px);
+    position: relative;
 
     &>canvas {
         width: 100%;
@@ -11,6 +15,6 @@
 @media (max-width: 768px) or (max-height: 768px) {
     .threeContainer {
         width: 400px;
-        height: 300%;
+        height: 300px;
     }
 }
