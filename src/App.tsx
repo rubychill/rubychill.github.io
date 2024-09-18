@@ -1,12 +1,13 @@
-import type { Component } from 'solid-js';
+import { lazy, type Component } from 'solid-js';
 import styles from './App.module.scss';
 import { CornerMenu } from './components/cornerMenu/CornerMenu';
 import { Route, Router } from '@solidjs/router';
 import { Landing } from './routes/landing/Landing';
 import { Home } from './routes/home/Home';
 import { Maze } from './routes/maze/Maze';
-import { Room } from './routes/room/Room';
 import { Who } from './routes/who/Who';
+
+const Room = lazy(() => import("./routes/room/Room"));
 
 const App: Component = () => {
   return (

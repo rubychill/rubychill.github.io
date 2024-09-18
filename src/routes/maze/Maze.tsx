@@ -1,6 +1,5 @@
 import { createShortcut, useKeyDownList } from '@solid-primitives/keyboard';
 import classnames from 'classnames';
-import range from 'lodash/range';
 import { createSignal } from 'solid-js';
 import { style } from 'solid-js/web';
 import styles from './Maze.module.scss';

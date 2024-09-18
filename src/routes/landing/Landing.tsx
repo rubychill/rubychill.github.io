@@ -1,9 +1,11 @@
 import { useNavigate } from '@solidjs/router';
 import classnames from 'classnames';
-import { createSignal } from 'solid-js';
+import { createSignal, lazy } from 'solid-js';
 import { Transition } from 'solid-transition-group';
-import { Fireplace } from '../../components/fireplace/Fireplace';
+//import { Fireplace } from '../../components/fireplace/Fireplace';
 import styles from './Landing.module.scss';
+
+const Fireplace = lazy(() => import('../../components/fireplace/Fireplace'));
 
 export interface LandingProps {
     class?: string;

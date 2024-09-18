@@ -7,7 +7,7 @@ export interface FireplaceProps {
     class?: string;
 }
 
-export const Fireplace = (props: FireplaceProps) => {
+const Fireplace = (props: FireplaceProps) => {
     const frames: HTMLElement[] = [];
     let previousFrame = 0;
     let currentFrame = 0;
@@ -41,3 +41,5 @@ export const Fireplace = (props: FireplaceProps) => {
         </div>
     </div>
 }
+
+export default Fireplace;

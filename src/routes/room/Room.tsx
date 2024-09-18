@@ -2,14 +2,14 @@ import classnames from 'classnames';
 import styles from './Room.module.scss';
 import { PerspectiveCamera, Scene, WebGLRenderer, Vector3, BufferGeometry, LineBasicMaterial, Line, Vector2, TextureLoader, NearestFilter, SpriteMaterial, Sprite, Raycaster } from 'three';
 import { createSignal, onCleanup } from 'solid-js';
-import { range } from 'lodash';
+import range from 'lodash/range';
 import boyPng from './boy.png';
 
 const gridResolution = 20;
 const lineResolution = 11;
 const rotateAmount = 0.2;
 
-export const Room = () => {
+const Room = () => {
     const [quote, setQuote] = createSignal("");
     const scene = new Scene();
 
@@ -127,3 +127,5 @@ export const Room = () => {
         <div class={classnames(styles.threeContainer)}>{renderer.domElement}</div>
     </div>
 }
+
+export default Room;
