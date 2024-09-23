@@ -2,17 +2,15 @@ import { useNavigate } from '@solidjs/router';
 import classnames from 'classnames';
 import { createSignal, lazy } from 'solid-js';
 import { Transition } from 'solid-transition-group';
-//import { Fireplace } from '../../components/fireplace/Fireplace';
+import { Fireplace } from '../../components/fireplace/Fireplace';
 import styles from './Landing.module.scss';
-
-const Fireplace = lazy(() => import('../../components/fireplace/Fireplace'));
 
 export interface LandingProps {
     class?: string;
 
 }
 
-export const Landing = () => {
+const Landing = () => {
     const navigate = useNavigate();
     const [show, setShow] = createSignal(true);
 
@@ -48,3 +46,5 @@ export const Landing = () => {
         </div>}
     </Transition>
 }
+
+export default Landing;
