@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import styles from './CornerMenu.module.scss';
-import CornerIcon from './corner-icon.svg';
+import CornerIcon from './corner-icon.svg?react';
+import { Link } from 'wouter';
 
 export interface CornerMenuProps {
     class?: string;
@@ -10,7 +11,7 @@ export interface CornerMenuProps {
 export const CornerMenu = (props: CornerMenuProps) => {
 
 
-    return <div class={classnames(props.class, styles.icon)}>
-        <a href={"/home"}><CornerIcon /></a>
+    return <div className={classnames(props.class, styles.icon)}>
+        <Link href={"/home"}><CornerIcon /></Link>
     </div>
 }

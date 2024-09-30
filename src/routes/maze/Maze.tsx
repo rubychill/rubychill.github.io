@@ -1,35 +1,39 @@
-import { createShortcut, useKeyDownList } from '@solid-primitives/keyboard';
 import classnames from 'classnames';
-import { createSignal } from 'solid-js';
-import { style } from 'solid-js/web';
+import { useEffect, useState } from 'react';
 import styles from './Maze.module.scss';
 import { MazeRender } from './MazeRender';
 import { MazeMap } from './types';
+import without from 'lodash/without';
 
 export interface MazeProps {
     class?: string;
-
 }
 
-export const Maze = () => {
-    const keys = useKeyDownList();
-    const [cameraPos, setCameraPos] = createSignal({ x: 4, y: 4 });
-    const [cameraAngle, setCameraAngle] = createSignal(90);
-    const [cameraFov, setCameraFov] = createSignal(60);
-    const [cameraResolution, setCameraResolution] = createSignal(60);
+const cameraFov = 60;
+const cameraResolution = 60
 
-    createShortcut([","], () => {
-        setCameraFov((prev) => prev - 5);
-    });
-    createShortcut(["."], () => {
-        setCameraFov((prev) => prev + 5);
-    });
-    createShortcut(["["], () => {
-        setCameraResolution((prev) => prev - 10);
-    });
-    createShortcut(["]"], () => {
-        setCameraResolution((prev) => prev + 10);
-    });
+export const Maze = () => {
+    const [keyDownList, setKeyDownList] = useState<string[]>([]);
+    const [cameraPos, setCameraPos] = useState({ x: 4, y: 4 });
+    const [cameraAngle, setCameraAngle] = useState(90);
+
+    useEffect(() => {
+        const handleKeyDown = (evt: KeyboardEvent) => {
+            setKeyDownList((prev) => [...prev, evt.key])
+        };
+
+        const handleKeyUp = (evt: KeyboardEvent) => {
+            setKeyDownList((prev) => without(prev, evt.key));
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keydown", handleKeyUp);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener("keydown", handleKeyUp);
+        }
+    }, []);
 
     const mazeMap: MazeMap = { walls: [] };
     const mazeHeight = 10;
@@ -44,7 +48,7 @@ export const Maze = () => {
     const rotSpeed = 80;
     const moveSpeed = 3;
     setInterval(() => {
-        keys().forEach((key) => {
+        keyDownList.forEach((key) => {
             if (key === "ARROWLEFT") {
                 setCameraAngle((prev) => prev += (rotSpeed * frameTime / 1000));
             }
@@ -52,21 +56,21 @@ export const Maze = () => {
                 setCameraAngle((prev) => prev -= (rotSpeed * frameTime / 1000));
             }
             if (key === "ARROWUP") {
-                setCameraPos((prev) => ({ x: prev.x + Math.sin(Math.PI * 2 * cameraAngle() / 360) * (moveSpeed * frameTime / 1000), y: prev.y + Math.cos(Math.PI * 2 * cameraAngle() / 360) * (moveSpeed * frameTime / 1000) }));
+                setCameraPos((prev) => ({ x: prev.x + Math.sin(Math.PI * 2 * cameraAngle / 360) * (moveSpeed * frameTime / 1000), y: prev.y + Math.cos(Math.PI * 2 * cameraAngle / 360) * (moveSpeed * frameTime / 1000) }));
             }
             if (key === "ARROWDOWN") {
-                setCameraPos((prev) => ({ x: prev.x - Math.sin(Math.PI * 2 * cameraAngle() / 360) * (moveSpeed * frameTime / 1000), y: prev.y - Math.cos(Math.PI * 2 * cameraAngle() / 360) * (moveSpeed * frameTime / 1000) }));
+                setCameraPos((prev) => ({ x: prev.x - Math.sin(Math.PI * 2 * cameraAngle / 360) * (moveSpeed * frameTime / 1000), y: prev.y - Math.cos(Math.PI * 2 * cameraAngle / 360) * (moveSpeed * frameTime / 1000) }));
             }
         });
     }, frameTime);
 
-    return <div class={classnames(styles.maze)}>
+    return <div className={classnames(styles.maze)}>
         <MazeRender
             mazeMap={mazeMap}
-            horizontalResolution={cameraResolution()}
-            cameraFov={cameraFov()}
-            cameraAngle={cameraAngle()}
-            cameraPos={cameraPos()}
+            horizontalResolution={cameraResolution}
+            cameraFov={cameraFov}
+            cameraAngle={cameraAngle}
+            cameraPos={cameraPos}
         />
     </div>
 }

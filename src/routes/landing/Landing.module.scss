@@ -14,3 +14,24 @@
     font-size: 1.2em;
     text-align: center;
 }
+
+.landingEnter {
+    opacity: 0;
+}
+.landingEnterActive {
+    opacity: 1;
+    transition: opacity 5000ms;
+}
+.landingEnterDone {
+    opacity: 1;
+}
+.landingExit {
+    opacity: 1;
+}
+.landingExitActive {
+    opacity: 0;
+    transition: opacity 500ms;
+}
+.landingExitDone {
+    opacity: 1;
+}

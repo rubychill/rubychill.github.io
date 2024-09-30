@@ -1,10 +1,9 @@
-import { createShortcut } from '@solid-primitives/keyboard';
 import classnames from 'classnames';
 import range from 'lodash/range';
-import { createMemo, createSignal, For, Show } from 'solid-js';
 import styles from './MazeRender.module.scss';
 import { MazeMap } from './types';
 import { abs, deg2rad, rayLineIntersection, sub, Vector } from './util';
+import { useMemo, useRef } from 'react';
 
 export interface MazeRenderProps {
     class?: string;
@@ -16,22 +15,22 @@ export interface MazeRenderProps {
 }
 
 export const MazeRender = (props: MazeRenderProps) => {
+    const renderSvg = useRef<SVGSVGElement>(null);
     const wallHeight = 0.06;
-    const [debug, setDebug] = createSignal(false);
-    createShortcut(["M"], () => setDebug((prev) => !prev));
-    const rayAngles = createMemo(() => {
+    // const [debug, setDebug] = createSignal(false);
+    // createShortcut(["M"], () => setDebug((prev) => !prev));
+    const rayAngles = useMemo(() => {
         const rayAngles: number[] = [];
         const startingAngle = props.cameraAngle - (props.cameraFov / 2);
-        const endingAngle = props.cameraAngle + (props.cameraFov / 2);
         const angleDelta = props.cameraFov / props.horizontalResolution;
         for (const ray of range(props.horizontalResolution)) {
             rayAngles.unshift(startingAngle + (ray * angleDelta) + (angleDelta / 2));
         }
         return rayAngles;
-    });
+    }, []);
 
-    const rays = createMemo(() => {
-        const rayAnglesRad = rayAngles().map((angle) => Math.PI * 2 * angle / 360);
+    const rays = useMemo(() => {
+        const rayAnglesRad = rayAngles.map((angle) => Math.PI * 2 * angle / 360);
         const rays = rayAnglesRad.map((angle) => {
             return {
                 x: Math.sin(angle),
@@ -40,10 +39,10 @@ export const MazeRender = (props: MazeRenderProps) => {
         });
 
         return rays;
-    })
+    }, [rayAngles])
 
-    const allRayHits = createMemo(() => {
-        const rayHits = rays().map((ray) => {
+    const allRayHits = useMemo(() => {
+        const rayHits = rays.map((ray) => {
             const hits: Vector[] = [];
             for (const wall of props.mazeMap.walls) {
                 const hitCheck = rayLineIntersection(props.cameraPos, ray, wall.p1, wall.p2);
@@ -55,10 +54,10 @@ export const MazeRender = (props: MazeRenderProps) => {
         });
 
         return rayHits;
-    })
+    }, [rays, props.cameraPos, props.mazeMap.walls])
 
-    const rayHits = createMemo(() => {
-        const rayHits = rays().map((ray) => {
+    const rayHits = useMemo(() => {
+        const rayHits = rays.map((ray) => {
             let currentHit;
             let currentHitLength;
             for (const wall of props.mazeMap.walls) {
@@ -76,15 +75,15 @@ export const MazeRender = (props: MazeRenderProps) => {
         });
 
         return rayHits;
-    })
+    }, [rays, props.cameraPos, props.mazeMap.walls])
 
-    const rayHitLengths = createMemo(() => {
-        return rayHits().map((ray) => {
+    const rayHitLengths = useMemo(() => {
+        return rayHits.map((ray) => {
             if (ray) {
                 return abs(sub(ray, props.cameraPos));
             }
         });
-    })
+    }, [props.cameraPos, rayHits])
 
     const multiplier = () => {
         let minX: number = Number.MAX_SAFE_INTEGER;
@@ -124,7 +123,6 @@ export const MazeRender = (props: MazeRenderProps) => {
         return { x: multiplierX, y: multiplierY };
     }
 
-    let renderSvg: SVGSVGElement | undefined;
     const renderGap = 5;
     const renderCalcXPos = (index: number) => {
         return `${index} * ${100 / props.horizontalResolution}% + ${renderGap / 2}px`;
@@ -133,9 +131,9 @@ export const MazeRender = (props: MazeRenderProps) => {
         return `${100 / props.horizontalResolution}% - ${renderGap}px`;
     }
     const renderCalcHeight = (rayHitLength: number | undefined) => {
-        if (renderSvg && rayHitLength) {
-            const renderHeight = renderSvg.clientWidth || window.innerWidth;
-            const renderWidth = renderSvg.clientHeight || 700;
+        if (renderSvg.current && rayHitLength) {
+            const renderHeight = renderSvg.current.clientWidth || window.innerWidth;
+            const renderWidth = renderSvg.current.clientHeight || 700;
             const aspectRatio = renderWidth / renderHeight;
             const verticalFov = 2 * Math.atan(Math.tan(deg2rad(props.cameraFov) / 2) * aspectRatio);
             const angularHeight = Math.atan(wallHeight / rayHitLength) * 2;
@@ -145,8 +143,8 @@ export const MazeRender = (props: MazeRenderProps) => {
         }
     }
     const renderCalcYPos = (rayHitLength: number | undefined) => {
-        if (renderSvg && rayHitLength) {
-            const renderHeight = renderSvg.clientHeight || 700;
+        if (renderSvg.current && rayHitLength) {
+            const renderHeight = renderSvg.current.clientHeight || 700;
             const drawHeight = renderCalcHeight(rayHitLength);
             return (renderHeight - drawHeight) / 2;
         } else {
@@ -154,8 +152,8 @@ export const MazeRender = (props: MazeRenderProps) => {
         }
     }
     const renderCalcOpacity = (rayHitLength: number | undefined) => {
-        if (renderSvg && rayHitLength) {
-            const renderHeight = renderSvg.clientHeight || 700;
+        if (renderSvg.current && rayHitLength) {
+            const renderHeight = renderSvg.current.clientHeight || 700;
             const drawHeight = renderCalcHeight(rayHitLength);
             return Math.pow(1.3, 1 - (renderHeight / drawHeight));
         } else {
@@ -163,9 +161,9 @@ export const MazeRender = (props: MazeRenderProps) => {
         }
     }
 
-    return <div class={classnames(props.class, styles.mazeRender)}>
-        <Show when={debug()}>
-            {/* <div class={styles.debug}>
+    return <div className={classnames(props.class, styles.mazeRender)}>
+        {/* <Show when={debug()}>
+            <div class={styles.debug}>
                 <For each={rayAngles()}>
                     {(rayAngle, i) => <div>
                         <div>{rayAngle.toFixed(0)}</div>
@@ -174,7 +172,7 @@ export const MazeRender = (props: MazeRenderProps) => {
                         <div>{rayHitLengths()[i()]?.toFixed(2)}</div>
                     </div>}
                 </For>
-            </div> */}
+            </div>
             <div class={styles.debugMap}>
                 <svg width={"250px"} height={"250px"} viewBox={"-50 -50 300 300"}>
                     <circle cx={props.cameraPos.x * multiplier().x} cy={props.cameraPos.y * multiplier().y} r={3} style={"stroke:white;stroke-width:1"} />
@@ -189,18 +187,16 @@ export const MazeRender = (props: MazeRenderProps) => {
                     </For>
                 </svg>
             </div>
-        </Show>
+        </Show> */}
         <svg width={"100%"} height={"700px"} ref={renderSvg}>
-            <For each={rayHitLengths()}>
-                {(rayLength, i) => <rect
-                    x={`calc(${renderCalcXPos(i())})`}
-                    y={renderCalcYPos(rayLength)}
-                    width={`calc(${renderCalcWidth(i())}`}
-                    height={renderCalcHeight(rayLength)}
-                    fill={"#EAF0CE"}
-                    opacity={renderCalcOpacity(rayLength)}
-                />}
-            </For>
+            {rayHitLengths.map((rayLength, i) => <rect
+                x={`calc(${renderCalcXPos(i)})`}
+                y={renderCalcYPos(rayLength)}
+                width={`calc(${renderCalcWidth(i)}`}
+                height={renderCalcHeight(rayLength)}
+                fill={"#EAF0CE"}
+                opacity={renderCalcOpacity(rayLength)}
+            />)}
         </svg>
     </div>
 }

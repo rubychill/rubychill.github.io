@@ -1,9 +1,9 @@
-import { useNavigate } from '@solidjs/router';
+import { useLocation } from 'wouter';
 import classnames from 'classnames';
-import { createSignal, lazy } from 'solid-js';
-import { Transition } from 'solid-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import { Fireplace } from '../../components/fireplace/Fireplace';
 import styles from './Landing.module.scss';
+import { useEffect, useRef, useState } from 'react';
 
 export interface LandingProps {
     class?: string;
@@ -11,40 +11,37 @@ export interface LandingProps {
 }
 
 const Landing = () => {
-    const navigate = useNavigate();
-    const [show, setShow] = createSignal(true);
+    const [, setLocation] = useLocation();
+    const [show, setShow] = useState(false);
+    const transitionRef = useRef(null);
 
-    return <Transition
-        appear={true}
-        onEnter={(el, done) => {
-            const a = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 5000 });
-            a.finished.then(() => {
-                if (el instanceof HTMLElement) {
-                    el.style.opacity = "1";
-                }
-                done();
-            });
+    useEffect(() => setShow(true), []);
+
+    return <CSSTransition
+        nodeRef={transitionRef}
+        in={show}
+        classNames={{
+            enter: styles.landingEnter,
+            enterActive: styles.landingEnterActive,
+            enterDone: styles.landingEnterDone,
+            exit: styles.landingExit,
+            exitActive: styles.landingExitActive,
+            exitDone: styles.landingExitDone,
         }}
-        onExit={(el, done) => {
-            let startingOpacity = "1";
-            if (el instanceof HTMLElement) {
-                startingOpacity = el.style.opacity;
-            }
-            const a = el.animate([{ opacity: startingOpacity }, { opacity: 0 }], { duration: 500 });
-            a.finished.then(() => {
-                navigate("/home");
-                done();
-            });
+        onExited={() => setLocation("/home")}
+        timeout={{
+            enter: 5000,
+            exit: 500,
         }}
     >
-        {show() && <div class={classnames(styles.center)}>
-            <p class={styles.blurb}>stay a while and <a href="/home" onClick={(e) => {
+        <div className={classnames(styles.center)} ref={transitionRef}>
+            <p className={styles.blurb}>stay a while and <a href="/home" onClick={(e) => {
                 e.preventDefault();
                 setShow(false);
             }}>rest</a></p>
             <Fireplace />
-        </div>}
-    </Transition>
+        </div>
+    </CSSTransition>
 }
 
 export default Landing;

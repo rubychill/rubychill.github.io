@@ -1,37 +1,24 @@
 import classnames from 'classnames';
 import styles from './Room.module.scss';
-import { PerspectiveCamera, Scene, WebGLRenderer, Vector3, BufferGeometry, LineBasicMaterial, Line, Vector2, TextureLoader, NearestFilter, SpriteMaterial, Sprite, Raycaster } from 'three';
-import { createSignal, onCleanup } from 'solid-js';
+import { Vector3, BufferGeometry, Vector2, TextureLoader, Sprite } from 'three';
 import range from 'lodash/range';
 import boyPng from './boy.png';
+import { useLayoutEffect, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 
 const gridResolution = 20;
 const lineResolution = 11;
 const rotateAmount = 0.2;
 
 const Room = () => {
-    const [quote, setQuote] = createSignal("");
-    const scene = new Scene();
+    //const [quote, setQuote] = useState("");
 
-    const camera = new PerspectiveCamera(75, 4 / 3, 0.1, 1000);
-    camera.position.set(0, -0.6, 0.2);
-    camera.rotation.x = (Math.PI / 180) * 70;
-
-    const renderer = new WebGLRenderer({ antialias: false });
-    renderer.setSize(400, 300);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x24212c);
-
-    const material = new LineBasicMaterial({ color: 0xffffff });
     const dropPoint = 0.2;
-
     const curveFn = (x: number) => ((45 * Math.pow(x - 0.2, 1 / 6)) / 53) - 0.7
-
     const lines: Vector3[][] = [];
     range(gridResolution + 1).forEach((i) => {
         const offset = i / gridResolution - 0.5;
         // horizontal
-        let segment = 0;
         let segments: Vector3[] = [];
         range(lineResolution + 1).forEach((segment) => {
             const x = segment / lineResolution - 0.5;
@@ -52,7 +39,6 @@ const Room = () => {
         lines.push([...segments]);
 
         // vertical
-        segment = 0;
         segments = [];
         range(lineResolution + 1).forEach((segment) => {
             const y = segment / lineResolution - 0.5;
@@ -73,59 +59,60 @@ const Room = () => {
         lines.push([...segments]);
     });
 
-    const lineObjects = lines.map((line) => {
-        return new Line(new BufferGeometry().setFromPoints(line), material);
-    });
+    return <div className={classnames(styles.threeContainer)}>
+        <Canvas
+            camera={{
+                fov: 75,
+                aspect: 4/3,
+                near: 0.1,
+                far: 1000,
+                position: [0, -0.6, 0.2],
+                rotation: [(Math.PI / 180) * 70, 0, 0],
+            }}
+        >
+            <Boy />
+            <Lines lines={lines} />
+        </Canvas>
+    </div>
+}
 
-    scene.add(...lineObjects);
-
+const Boy = () => {
+    const boyRef = useRef<Sprite>(null);
+    
     const loader = new TextureLoader();
     const boyTexture = loader.load(boyPng);
-    boyTexture.magFilter = NearestFilter;
-    const boyMaterial = new SpriteMaterial({ map: boyTexture });
-    const boySprite = new Sprite(boyMaterial);
-    boySprite.scale.set(0.7, 0.7, 0.7);
-    boySprite.position.set(0.02, 0, -0.05);
-    scene.add(boySprite);
 
-    renderer.domElement.addEventListener("pointerdown", (event) => {
-        const pointer = new Vector2();
-        const raycaster = new Raycaster();
-
-        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-        pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
-
-        console.log(pointer.x, pointer.y);
-
-        raycaster.setFromCamera(pointer, camera);
-
-        const intersects = raycaster.intersectObjects(scene.children, true);
-
-        if (intersects.length > 0) {
-            const firstIntersectedObject = intersects[0].object;
-            console.log("UUID of intersected object: ", firstIntersectedObject.uuid);
-
-            if (firstIntersectedObject instanceof Sprite) {
-            console.log('Sprite clicked:', firstIntersectedObject);
-            }
+    useFrame((state) => {
+        if (boyRef.current) {
+            boyRef.current.position.setZ(Math.sin(state.clock.elapsedTime / 1.5) / 30 + 0.05);
         }
+        state.scene.rotateOnWorldAxis(new Vector3(0, 0, 1), Math.PI / 180 * rotateAmount);
     });
 
-    let frameCount = 0;
-    let frame = requestAnimationFrame(function loop() {
-        boySprite.position.z = Math.sin(++frameCount / 100) / 100;
-        scene.rotateOnWorldAxis(new Vector3(0, 0, 1), Math.PI / 180 * rotateAmount);
-        frame = requestAnimationFrame(loop);
-        renderer.render(scene, camera);
-    });
+    return <sprite
+        position={[0.02, 0, -0.05]}
+        scale={[0.7, 0.7, 0.7]}
+        ref={boyRef}
+    >
+        <spriteMaterial map={boyTexture} />
+    </sprite>
+}
 
-    onCleanup(() => {
-        cancelAnimationFrame(frame);
-    });
+const Lines = (props: {lines: Vector3[][]}) => {
+    return props.lines.map((line) => <Line line={line} key={line.map((item) => `${item.x}, ${item.y}, ${item.z}`).join(" - ")} />);
+}
 
-    return <div class={classnames()}>
-        <div class={classnames(styles.threeContainer)}>{renderer.domElement}</div>
-    </div>
+const Line = (props: {line: Vector3[]}) => {
+    const geoRef = useRef<BufferGeometry>(null);
+    useLayoutEffect(() => {
+        if (geoRef.current) {
+            geoRef.current.setFromPoints(props.line);
+        }
+    }, [props.line])
+    return <line>
+        <bufferGeometry ref={geoRef} />
+        <lineBasicMaterial color={"white"} />
+    </line>
 }
 
 export default Room;

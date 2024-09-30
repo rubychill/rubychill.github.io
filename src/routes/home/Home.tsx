@@ -1,14 +1,15 @@
 import classnames from 'classnames';
 import styles from './Home.module.scss';
+import { Link } from 'wouter';
 
 export const Home = () => {
-    return <div class={classnames(styles.home)}>
+    return <div className={classnames(styles.home)}>
         <h1>welcome</h1>
-        <a href={"/who"}>who</a>
-        <div class={classnames(styles.experiments)}>
+        <Link href={"/who"}>who</Link>
+        <div className={classnames(styles.experiments)}>
             <p>experiments</p>
-            <a href={"/room"}>0</a>
-            <a href={"/maze"}>1[WIP]</a>
+            <Link href={"/room"}>0</Link>
+            {/* <Link href={"/maze"}>1[WIP]</Link> */}
         </div>
     </div>
 }
