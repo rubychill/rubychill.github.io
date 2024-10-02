@@ -1,9 +1,12 @@
 import classnames from 'classnames';
 import styles from './Home.module.scss';
 import { Link } from 'wouter';
+import { RouteTransition } from '../RouteTransition';
 
 export const Home = () => {
-    return <div className={classnames(styles.home)}>
+    return <RouteTransition
+        className={classnames(styles.home)}
+    >
         <h1>welcome</h1>
         <Link href={"/who"}>who</Link>
         <div className={classnames(styles.experiments)}>
@@ -11,5 +14,5 @@ export const Home = () => {
             <Link href={"/room"}>0</Link>
             {/* <Link href={"/maze"}>1[WIP]</Link> */}
         </div>
-    </div>
+    </RouteTransition>
 }

@@ -1,29 +1,48 @@
 import styles from './App.module.scss';
 import { CornerMenu } from './components/cornerMenu/CornerMenu';
-import { Route, Switch } from 'wouter';
+import { Route, Switch, useLocation } from 'wouter';
 import { Home } from './routes/home/Home';
 import { Maze } from './routes/maze/Maze';
 import { Who } from './routes/who/Who';
-import { lazy, Suspense } from 'react';
+import { cloneElement, lazy, Suspense } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { useRoutes } from './routes/useRoutes';
+import { Loading } from './components/loading/Loading';
 
 const Landing = lazy(() => import("./routes/landing/Landing"));
 const Room = lazy(() => import("./routes/room/Room"));
 
 const App = () => {
-  return (
-    <div className={styles.app}>
-      <CornerMenu />
-      <Suspense fallback="Loading...">
-        <Switch>
-          <Route path="/" component={Landing} />
-          <Route path="/home" component={Home} />
-          <Route path="/maze" component={Maze} />
-          <Route path="/room" component={Room} />
-          <Route path="/who" component={Who} />
-        </Switch>
-      </Suspense>
-    </div>
-  );
+    const [location] = useLocation();
+    const element = useRoutes([
+        {
+            path: "/",
+            element: <Landing />
+        },
+        {
+            path: "/home",
+            element: <Home />
+        },
+        {
+            path: "/who",
+            element: <Who />
+        },
+        {
+            path: "/room",
+            element: <Room />
+        },
+    ])
+
+    return (
+        <div className={styles.app}>
+            <CornerMenu />
+            <Suspense fallback={""}>
+                <AnimatePresence mode="wait">
+                    {element && cloneElement(element, {key: location})}
+                </AnimatePresence>
+            </Suspense>
+        </div>
+    );
 };
 
 export default App;
